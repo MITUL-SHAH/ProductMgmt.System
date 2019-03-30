@@ -1,0 +1,320 @@
+openapi: 3.0.1
+info:
+  title: Product Mgmt. System
+  description: 'This is product management system intended for use of Product Manager'
+  contact:
+    email: someEmail@domain.com
+  version: 1.0.0
+servers:
+- url: http://localhost:3001          
+
+tags:                                         
+- name: product
+  description: Everything about your Product
+- name: category
+  description: All about diff. categories in store
+
+paths:
+  /product:
+    get:
+      tags:
+      - product
+      summary: Get list of all the products
+      parameters: []
+      responses:
+        200:
+          description: Successfully displayed list of products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+    
+    post:
+      tags:
+      - product
+      summary: Add a new product to the store
+      operationId: addProduct
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/product'
+        required: true
+      responses:
+        200:
+          description: Successfully added product
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/reply'
+      
+  /product/{product_id}:
+    get:
+      tags:
+      - product
+      summary: Get details of the product
+      parameters: 
+        - in: path
+          name: product_id
+          schema:
+            type: string
+            #pattern: '^\(A-z){5}\d{4}$'
+          required: true
+      responses:
+        200:
+          description: Successfully display the product details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/product'
+    
+    put:
+      tags:
+      - product
+      summary: Update an existing product
+      operationId: updateProduct
+      description: Product whose details need to be updated to the store
+      parameters:
+      - in: path
+        name: product_id
+        schema:
+          type: string
+        required: true
+      responses:
+        200:
+          description: Successful Updated Product
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/reply'
+        #Write default also
+      
+    delete:
+      tags:
+      - product
+      summary: Delete an existing Product
+      operationId: deleteProduct
+      description: Product which is to be deleted
+      parameters:
+      - in: path
+        name: product_id
+        schema:
+          type: string
+        required: true
+      responses:
+        200:
+          description: Deleted Product Successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/reply'
+
+  /product/{product_id}/uploadImg:
+    post:
+      tags:
+      - product
+      summary: UploadImg for a product
+      description: upload img for product 
+      operationId: uploadImg
+      parameters:
+      - in: path
+        name: product_id
+        schema:
+          type: string
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  type: string
+                  description: Url of Img
+      responses:
+        200:
+          description: Uploaded Image Successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/reply'
+  
+  /product/{SKU}:
+    get:
+      tags:
+      - product
+      parameters: 
+      - in: path
+        name: SKU
+        schema:
+          type: string
+        required: true
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SKU'
+            
+    put:
+      tags:
+      - product
+      parameters:
+      - in: path
+        name: SKU
+        schema:
+          type: string
+        required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+                $ref: '#/components/schemas/SKU'
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SKU'
+  
+  /category:
+    get:
+      tags:
+      - category
+      responses:
+        200:
+          description: Get all Categories
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/category'
+    post:
+      tags:
+      - category
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/category'
+        required: true
+      responses:
+        200:
+          description: Add a new category
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/reply'
+  
+  
+  /category/{cat_id}:  
+    delete:
+      tags:
+      - category
+      summary: Delete an existing category
+      operationId: deleteCategory
+      description: Category which is to be deleted
+      parameters:
+      - in: path
+        name: cat_id
+        schema:
+          type: string
+        required: true
+      responses:
+        200:
+          description: Deleted category Successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/reply'
+      
+    put:
+      tags:
+      - product
+      summary: Update an existing category
+      operationId: updateCategory
+      description: category whose details need to be updated to the store
+      parameters:
+      - in: path
+        name: cat_id
+        schema:
+          type: string
+        required: true
+      responses:
+        200:
+          description: Successful Updated Product
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/reply'
+        #Write default also
+    
+    
+          
+components:
+  schemas:
+    reply:
+      type: object
+      properties:
+        msg:
+          type: string
+          #default: "Success"
+    category:
+      type: object
+      properties:
+        cat_id: 
+          type: string
+          #pattern: '^\(A-z){4}\d{3}$'
+        name: 
+          type: string
+          
+    supplier:
+      type: object
+      properties:
+        sup_id: 
+          type: string
+          #pattern:  '^\(A-z){4}\d{3}$'
+        name: 
+          type: string
+          
+    SKU:
+      allOf:
+      - $ref: '#/components/schemas/product'
+      - type: object
+        properties:
+          delievery_status:          
+            type: string
+    
+    product:
+      type: object
+      properties:
+        product_id: 
+          type: string
+          #pattern: '^\(A-z){5}\d{4}$'
+        name:
+          type: string
+          #min: 3
+        category:
+          $ref: '#/components/schemas/category'
+        launch_state:
+          type: string
+          enum: 
+          - live
+          - draft
+        state:
+          type: string
+          enum: 
+          - physical
+          - digital
+        images:
+          type: object
+          properties:
+            img_path: 
+              type: string
+              format: uri
+        metadata:
+          type: string
+        supplier:
+          $ref: '#/components/schemas/supplier'      
